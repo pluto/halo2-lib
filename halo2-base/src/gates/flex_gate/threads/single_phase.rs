@@ -163,6 +163,7 @@ impl<F: ScalarField> VirtualRegionManager<F> for SinglePhaseCoreManager<F> {
                 *usable_rows,
                 self.use_unknown,
             );
+            println!("=== DEBUG (H2LIB): Breakpoints {:?}, basic_gate_len={}", break_points, config.len());
             let mut bp = self.break_points.borrow_mut();
             if let Some(bp) = bp.as_ref() {
                 assert_eq!(bp, &break_points, "break points don't match");
@@ -242,7 +243,7 @@ pub fn assign_with_constraints<F: ScalarField, const ROTATIONS: usize>(
                 // when there is a break point, because we may have two gates that overlap at the current cell, we must copy the current cell to the next column for safety
                 basic_gate = basic_gates
                         .get(gate_index)
-                        .unwrap_or_else(|| panic!("NOT ENOUGH ADVICE COLUMNS. Perhaps blinding factors were not taken into account. The max non-poisoned rows is {max_rows}"));
+                        .unwrap_or_else(|| panic!("NOT ENOUGH ADVICE COLUMNS. Perhaps blinding factors were not taken into account. The max non-poisoned rows is {max_rows}, gate_index={}", gate_index));
                 let column = basic_gate.value;
                 #[cfg(feature = "halo2-axiom")]
                 let ncell = region.assign_advice(column, row_offset, value);

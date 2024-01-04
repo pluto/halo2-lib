@@ -4,7 +4,7 @@ use crate::ff::{FromUniformBytes, PrimeField};
 #[cfg(not(feature = "halo2-axiom"))]
 use crate::halo2_proofs::arithmetic::CurveAffine;
 use crate::halo2_proofs::circuit::Value;
-#[cfg(feature = "halo2-axiom")]
+// #[cfg(feature = "halo2-axiom")]
 pub use crate::halo2_proofs::halo2curves::CurveAffineExt;
 
 use num_bigint::BigInt;
@@ -19,7 +19,7 @@ pub mod halo2;
 pub mod testing;
 
 /// Helper trait to convert to and from a [BigPrimeField] by converting a list of [u64] digits
-#[cfg(feature = "halo2-axiom")]
+// #[cfg(feature = "halo2-axiom")]
 pub trait BigPrimeField: ScalarField {
     /// Converts a slice of [u64] to [BigPrimeField]
     /// * `val`: the slice of u64
@@ -29,7 +29,7 @@ pub trait BigPrimeField: ScalarField {
     /// * The integer value of `val` is already less than the modulus of `Self`
     fn from_u64_digits(val: &[u64]) -> Self;
 }
-#[cfg(feature = "halo2-axiom")]
+// #[cfg(feature = "halo2-axiom")]
 impl<F> BigPrimeField for F
 where
     F: ScalarField + From<[u64; 4]>, // Assume [u64; 4] is little-endian. We only implement ScalarField when this is true.
@@ -94,8 +94,8 @@ pub trait ScalarField: PrimeField + FromUniformBytes<64> + From<bool> + Hash + O
 // Later: will need to separate BigPrimeField from ScalarField when Goldilocks is introduced
 
 /// [ScalarField] that is ~256 bits long
-#[cfg(feature = "halo2-pse")]
-pub trait BigPrimeField = PrimeField<Repr = [u8; 32]> + ScalarField;
+// #[cfg(feature = "halo2-pse")]
+// pub trait BigPrimeField = PrimeField<Repr = [u8; 32]> + ScalarField;
 
 /// Converts an [Iterator] of u64 digits into `number_of_limbs` limbs of `bit_len` bits returned as a [Vec].
 ///
@@ -245,15 +245,15 @@ pub fn decompose_fe_to_u64_limbs<F: ScalarField>(
     number_of_limbs: usize,
     bit_len: usize,
 ) -> Vec<u64> {
-    #[cfg(feature = "halo2-axiom")]
-    {
+   // #[cfg(feature = "halo2-axiom")]
+    //{
         e.to_u64_limbs(number_of_limbs, bit_len)
-    }
+    //}
 
-    #[cfg(feature = "halo2-pse")]
-    {
-        decompose_u64_digits_to_limbs(fe_to_biguint(e).iter_u64_digits(), number_of_limbs, bit_len)
-    }
+    // #[cfg(feature = "halo2-pse")]
+    // {
+    //     decompose_u64_digits_to_limbs(fe_to_biguint(e).iter_u64_digits(), number_of_limbs, bit_len)
+    // }
 }
 
 /// Decomposes an immutable reference to a [BigUint] into `num_limbs` limbs of `bit_len` bits each and returns a [Vec] of [BigPrimeField] represented by those limbs.
@@ -351,16 +351,16 @@ pub fn compose(input: Vec<BigUint>, bit_len: usize) -> BigUint {
 }
 
 /// Helper trait
-#[cfg(feature = "halo2-pse")]
-pub trait CurveAffineExt: CurveAffine {
-    /// Returns the raw affine (X, Y) coordinantes
-    fn into_coordinates(self) -> (Self::Base, Self::Base) {
-        let coordinates = self.coordinates().unwrap();
-        (*coordinates.x(), *coordinates.y())
-    }
-}
-#[cfg(feature = "halo2-pse")]
-impl<C: CurveAffine> CurveAffineExt for C {}
+// #[cfg(feature = "halo2-pse")]
+// pub trait CurveAffineExt: CurveAffine {
+//     /// Returns the raw affine (X, Y) coordinantes
+//     fn into_coordinates(self) -> (Self::Base, Self::Base) {
+//         let coordinates = self.coordinates().unwrap();
+//         (*coordinates.x(), *coordinates.y())
+//     }
+// }
+// #[cfg(feature = "halo2-pse")]
+// impl<C: CurveAffine> CurveAffineExt for C {}
 
 mod scalar_field_impls {
     use std::hash::Hash;
